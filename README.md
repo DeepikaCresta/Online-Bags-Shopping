@@ -1,7 +1,7 @@
 ## Instruction for new update
 
 <ul>
-    <li><a href="docs/update.md">Fetch First Update (Esewa And Cash payment)</a></li>
+    <li><a href="Docs/update.md">Fetch First Update (Esewa And Cash payment)</a></li>
 </ul>
 
 ## Setup project for first time
