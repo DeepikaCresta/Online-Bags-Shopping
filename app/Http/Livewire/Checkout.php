@@ -15,67 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Checkout extends Component
 {
-
-    public function stripeCheckout()
-    {
-        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
-        $lineItems = [];
-        foreach (Cart::content() as $item) {
-            $lineItems[] = [
-                'price_data' => [
-                    'currency' => 'usd',
-                    'product_data' => [
-                        'name' => $item->model->name,
-                    ],
-                    'unit_amount' => $item->model->price * 100,
-                ],
-                'quantity' => $item->qty,
-            ];
-        }
-
-        $checkout_session = \Stripe\Checkout\Session::create([
-            'line_items' => $lineItems,
-            'mode' => 'payment',
-            'success_url' => route('checkout.success')."?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => route('checkout.cancel'),
-        ]);
-
-        $total = str_replace(',', '', Cart::total());
-        $order = new Order([
-            'user_id' => Auth::user()->id,
-            'status' => 'pending',
-            'total' => $total,
-            'session_id' => $checkout_session->id,
-        ]);
-        $order->save();
-
-        foreach (Cart::content() as $item) {
-            $price = str_replace(',', '', $item->price);
-            $orderItem = new OrderItem([
-                'order_id' => $order->id,
-                'product_id' => $item->model->id,
-                'quantity' => $item->qty,
-                'price' => $price
-            ]);
-            $orderItem->save();
-        }
-
-        return $checkout_session->url;
-    }
-
-    public function success(Request $request, InvoiceService $invoiceService)
-    {
-        $session_id = $request->query('session_id');
-
-    return redirect()->route('dashboard');
-        
-    }
-
-    public function cancel()
-    {
-        return redirect()->route('home')->with('success', 'Your order has been canceled.');
-    }
-
     public function makeOrder(Request $request)
     {
         $validatedRequest = $request->validate([
@@ -95,10 +34,18 @@ class Checkout extends Component
             $user->billingDetails()->update($validatedRequest);
         }
 
-        $sessionUrl = $this->stripeCheckout();
+        $order_data = [
+            'user_id' => Auth::user()->id,
+            'order_tracking_id' => 'ot-' . date("U"),
+            'tax' => Cart::tax(),
+            'payment_type' => 'cash',
+            'subtotal' => Cart::subtotal(),
+            'total' => Cart::total()
+        ];
+        session()->put('order_data', $order_data);
 
-
-        return redirect($sessionUrl);
+        create_esewa_order();
+        return redirect()->route('dashboard')->with(['success','Order has been placed.']);
     }
 
     public function render()
