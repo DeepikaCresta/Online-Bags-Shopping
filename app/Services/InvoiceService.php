@@ -28,6 +28,8 @@ class InvoiceService {
             ],
         ]);
 
+        $items = [];
+
         foreach ($order->orderItems as $item) {
             $items[] = (new InvoiceItem())->title($item->product->name)->pricePerUnit($item->price)->quantity($item->quantity);
         }

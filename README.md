@@ -2,6 +2,7 @@
 
 <ul>
     <li><a href="Docs/update.md">Fetch First Update (Esewa And Cash payment)</a></li>
+    <li><a href="Docs/gmail.md">Gmail Setup</a></li>
 </ul>
 
 ## Setup project for first time

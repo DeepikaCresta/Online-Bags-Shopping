@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderCompletedMail;
+use App\Mail\OrderReceived;
 use App\Models\Order;
+use App\Services\InvoiceService;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 
 class EsewaController extends Controller
@@ -38,24 +42,10 @@ class EsewaController extends Controller
             if(trim($response_code) =='Success')
             {
                 
-                $user_email = Auth::user()->email;
-                $carts = Cart::where('user_email', $user_email)->get()->all();
-                foreach($carts as $cart){
-                    $order->status= 1;
-                    $order->product_name = $cart->product_name;
-                    $order->product_image = $cart->product_image;
-                    $order->price = $cart->price;
-                    $order->quantity = $cart->quantity;
-                    $order->merchant_email = $cart->merchant_email;
-                    $order->user_email = $cart->user_email;
-                    $order->delivery_status = 'accepted';
-                    $order->save();
-                }
-                $user_email = Auth::user()->email;
-                $carts = Cart::where('user_email', $user_email)->get()->all();
-                foreach($carts as $cart){
-                    $cart->delete();
-                }
+                $order = create_esewa_order();
+                $invoiceService = new InvoiceService();
+                $invoice = $invoiceService->createInvoice($order);
+                Mail::to(Auth::user()->email)->send(new OrderReceived($order,$invoice));
                 return redirect()->route('dashboard')->with('success', 'Trasaction completed.');
             }
         }
@@ -146,7 +136,10 @@ class EsewaController extends Controller
             return redirect()->route('cart')->with(['error','Transaction failed']);
         }
         else{
-            create_esewa_order();
+            $order = create_esewa_order();
+            $invoiceService = new InvoiceService();
+            $invoice = $invoiceService->createInvoice($order);
+            Mail::to(Auth::user()->email)->send(new OrderReceived($order,$invoice));
             return redirect()->route('dashboard')->with(['success','Order has been placed.']);
         }
     }
