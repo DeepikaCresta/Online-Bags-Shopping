@@ -17,6 +17,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->create([
+            'name' => 'admin',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('password'),
+            'is_admin' => true
+        ]);
         // \App\Models\User::factory(10)->create();
         // Category::factory(6)->create();
         // $categories = Category::all();
@@ -25,11 +31,6 @@ class DatabaseSeeder extends Seeder
         //         $categories->random(rand(1, 3))->pluck('id')->toArray()
         //     );
         // });
-        User::factory()->create([
-            'name' => 'admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-            'is_admin' => true
-        ]);
+        
     }
 }
