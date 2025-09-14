@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Mail\OrderCompletedMail;
 use App\Mail\OrderReceived;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -44,7 +45,10 @@ class Checkout extends Component
         ];
         session()->put('order_data', $order_data);
 
-        create_esewa_order();
+        $order = create_esewa_order();
+        $invoiceService = new InvoiceService();
+        $invoice = $invoiceService->createInvoice($order);
+        Mail::to(Auth::user()->email)->send(new OrderReceived($order,$invoice));
         return redirect()->route('dashboard')->with(['success','Order has been placed.']);
     }
 

@@ -1,7 +1,7 @@
 <x-mail::message>
 # Your order has been completed
 
-Your order #{{ $order->id }} has been shipped.
+Your order with tracking id #{{ $order->order_tracking_id }} has been shipped.
 
 Thank you for your purchase!
 
