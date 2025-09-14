@@ -6,7 +6,7 @@
                     <div class="mb-25">
                         <h4 class="font-semibold text-lg text-gray-600">Billing Details</h4>
                     </div>
-                    <form method="post" action="{{route('checkout.order')}}" id="checkoutForm">
+                    <form method="post" id="checkoutForm">
                         @csrf
                         <div class="mb-4">
                             <x-input-label for="country" :value="__('Country *')" />
@@ -136,10 +136,22 @@
                                 </li>
                             </ul>
                         </form> --}}
-                        <button type="submit" class="btn btn-block mt-30" onclick="document.getElementById('checkoutForm').submit();">Place Order</button>
+                        <button type="submit" class="btn btn-block mt-30" onclick="directPayment()">Payement With Cash</button>
+                        <button type="submit" class="btn btn-block mt-30" onclick="esewaPayment()">Payment With Esewa</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <script>
+        function directPayment(){
+            document.getElementById('checkoutForm').action = "{{ route('checkout.order') }}";
+            document.getElementById('checkoutForm').submit();
+        }
+
+        function esewaPayment() {
+            document.getElementById('checkoutForm').action = "{{ route('payment') }}";
+            document.getElementById('checkoutForm').submit();
+        }
+    </script>
 </x-app-layout>

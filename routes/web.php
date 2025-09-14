@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EsewaController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Livewire\Cart;
@@ -37,6 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout-order', [Checkout::class, 'makeOrder'])->name('checkout.order');
     Route::get('/checkout-success', [Checkout::class, 'success'])->name('checkout.success');
     Route::get('/checkout-cancel', [Checkout::class, 'cancel'])->name('checkout.cancel');
+
+    route::any('/payment', [EsewaController::class, 'initiatePayment'])->name('payment');
+    route::get('/payment/callback', [EsewaController::class, 'paymentCallback'])->name('payment.callback'); 
+    route::get('/esewa',[EsewaController::class,'esewa_view'])->name('esewa.view');
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
