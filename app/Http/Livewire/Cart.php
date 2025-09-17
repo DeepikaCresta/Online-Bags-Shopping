@@ -18,7 +18,7 @@ class Cart extends Component
                 'message' => 'Product not found.'
             ]);
         }
-        CartFacade::add($p->id, $p->name, 1, $p->price)->associate('App\Models\Product');
+        CartFacade::add($p->id, $p->name, 1, $p->price, ['shipping_cost' => $p->shipping_cost])->associate('App\Models\Product');
         return redirect()->route('cart')->with([
             'success' => true,
             'message' => 'Item has been added to your cart.'
@@ -69,8 +69,27 @@ class Cart extends Component
             'message' => 'Item has been removed from your cart.'
         ]);
     }
+
+    public function getTotalShippingProperty()
+    {
+        return CartFacade::content()->sum(function ($item) {
+            return ($item->options->shipping_cost ?? 0) * $item->qty;
+        });
+    }
+
+    public function getGrandTotalProperty()
+    {
+        $total = (float) str_replace(',', '', CartFacade::total());
+
+        return $total + $this->totalShipping;
+    }
+
     public function render()
     {
-        return view('livewire.cart');
+        return view('livewire.cart', [
+            'cartItems' => CartFacade::content(),
+            'totalShipping' => $this->totalShipping,
+            'grandTotal' => $this->grandTotal,
+        ]);
     }
 }

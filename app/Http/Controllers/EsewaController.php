@@ -100,13 +100,20 @@ class EsewaController extends Controller
             $user->billingDetails()->update($validatedRequest);
         }
         
+        $totalShipping = Cart::content()->sum(function ($item) {
+            return ($item->options->shipping_cost ?? 0) * $item->qty;
+        });
+
+        $total = (float) str_replace(',', '', Cart::total())+$totalShipping;
+
         $order_data = [
             'user_id' => Auth::user()->id,
             'order_tracking_id' => 'ot-' . date("U"),
             'tax' => Cart::tax(),
             'payment_type' => 'esewa',
+            'shipping_cost' => $totalShipping,
             'subtotal' => Cart::subtotal(),
-            'total' => Cart::total()
+            'total' => $total
         ];
         session()->put('order_data', $order_data);
         $amount = $order_data['subtotal'];
@@ -117,7 +124,7 @@ class EsewaController extends Controller
         );
         $response = [
             'amount' => $amount,
-            'product_delivery_charge' => 0,
+            'product_delivery_charge' => $totalShipping,
             'product_service_charge' => 0,
             "product_code" => "EPAYTEST",
             'tax_amount' => $order_data['tax'],

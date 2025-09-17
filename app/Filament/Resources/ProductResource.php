@@ -42,32 +42,44 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required(),
-                Forms\Components\TextInput::make('SKU')
+
+                TextInput::make('SKU')
                     ->helperText('SKU be like this SKU-####')
                     ->regex('/SKU-\d{4}/')
                     ->required(),
-                Forms\Components\TextInput::make('price')
+
+                TextInput::make('price')
                     ->numeric()
                     ->prefix('Rs.')
                     ->rules(['min:0'])
                     ->required(),
-                Forms\Components\TextInput::make('old_price')
+
+                TextInput::make('old_price')
                     ->numeric()
                     ->prefix('Rs.')
                     ->rules(['min:0'])
                     ->required(),
-                Forms\Components\TextInput::make('quantity')->numeric(),
-                Forms\Components\TextInput::make('brief_description')
+
+                TextInput::make('shipping_cost') // NEW FIELD
+                    ->numeric()
+                    ->prefix('Rs.')
+                    ->rules(['min:0'])
+                    ->required(),
+
+                TextInput::make('quantity')->numeric(),
+
+                TextInput::make('brief_description')
                     ->rules(['min:10', 'max:100'])
                     ->required(),
-                Forms\Components\Select::make('stock_status')->options([
+
+                Select::make('stock_status')->options([
                     'instock' => 'In Stock',
                     'outstock' => 'Out of Stock',
-                ])
-                    ->default('instock'),
-                Forms\Components\FileUpload::make('image')
+                ])->default('instock'),
+
+                FileUpload::make('image')
                     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
                         $fileName = $file->hashName();
                         $name = explode('.', $fileName);
@@ -81,7 +93,8 @@ class ProductResource extends Resource
                     ->imageResizeTargetWidth('450')
                     ->imageResizeTargetHeight('450')
                     ->required(),
-                Forms\Components\FileUpload::make('images')
+
+                FileUpload::make('images')
                     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
                         $fileName = $file->hashName();
                         $name = explode('.', $fileName);
@@ -96,7 +109,8 @@ class ProductResource extends Resource
                     ->imageResizeTargetWidth('450')
                     ->imageResizeTargetHeight('450')
                     ->required(),
-                Forms\Components\RichEditor::make('description')
+
+                RichEditor::make('description')
                     ->maxLength(1000)
                     ->columnSpan('full')
                     ->toolbarButtons([
@@ -113,10 +127,10 @@ class ProductResource extends Resource
                         'strike',
                         'undo',
                     ]),
-                Forms\Components\CheckboxList::make('categories')
+
+                CheckboxList::make('categories')
                     ->columnSpan('full')
                     ->relationship('categories', 'name'),
-
             ]);
     }
 
@@ -127,23 +141,25 @@ class ProductResource extends Resource
                 FilamentExportHeaderAction::make('export')
             ])
             ->columns([
-                Tables\Columns\ImageColumn::make('image'),
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('SKU')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('price')->prefix('Rs.')->sortable(),
-                Tables\Columns\TextColumn::make('quantity')->sortable(),
-                Tables\Columns\TextColumn::make('created_at')->sortable()->date('M d H:i'),
-                Tables\Columns\TextColumn::make('updated_at')->sortable()->date('M d H:i'),
+                ImageColumn::make('image'),
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('SKU')->searchable()->sortable(),
+                TextColumn::make('price')->prefix('Rs.')->sortable(),
+                TextColumn::make('old_price')->prefix('Rs.')->sortable(),
+                TextColumn::make('shipping_cost')->prefix('Rs.')->sortable(), // NEW COLUMN
+                TextColumn::make('quantity')->sortable(),
+                TextColumn::make('created_at')->sortable()->date('M d H:i'),
+                TextColumn::make('updated_at')->sortable()->date('M d H:i'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
                 FilamentExportBulkAction::make('export'),
             ]);
     }

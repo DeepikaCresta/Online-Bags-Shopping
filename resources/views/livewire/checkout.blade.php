@@ -88,13 +88,13 @@
                                     </tr>
                                     <tr>
                                         <th>Shipping</th>
-                                        <td colspan="2"><em>Free Shipping</em></td>
+                                        <td class="product-subtotal" colspan="2">Rs. {{ $totalShipping }}</td>
                                     </tr>
                                     <tr>
                                         <th>Total</th>
                                         <td colspan="2" class="product-subtotal"><span
-                                                class="font-xl text-brand fw-900">Rs. {{ Cart::total() }}</span></td>
-                                    </tr>
+                                                class="font-xl text-brand fw-900">Rs. {{ $grandTotal }}</span></td>
+                                    </tr>Cart::total()
                                 </tbody>
                             </table>
                         </div>

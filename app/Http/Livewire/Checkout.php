@@ -35,13 +35,20 @@ class Checkout extends Component
             $user->billingDetails()->update($validatedRequest);
         }
 
+        $totalShipping = Cart::content()->sum(function ($item) {
+            return ($item->options->shipping_cost ?? 0) * $item->qty;
+        });
+
+        $total = (float) str_replace(',', '', Cart::total())+$totalShipping;
+        
         $order_data = [
             'user_id' => Auth::user()->id,
             'order_tracking_id' => 'ot-' . date("U"),
             'tax' => Cart::tax(),
+            'shipping_cost' => $totalShipping,
             'payment_type' => 'cash',
             'subtotal' => Cart::subtotal(),
-            'total' => Cart::total()
+            'total' => $total,
         ];
         session()->put('order_data', $order_data);
 
@@ -65,6 +72,15 @@ class Checkout extends Component
         }
         $user = Auth::user();
         $billingDetails = $user->billingDetails;
-        return view('livewire.checkout', compact('billingDetails'));
+
+        $totalShipping = Cart::content()->sum(function ($item) {
+            return ($item->options->shipping_cost ?? 0) * $item->qty;
+        });
+
+        // Grand total including shipping
+        $total = (float) str_replace(',', '', Cart::total());
+        $grandTotal = $total + $totalShipping;
+
+        return view('livewire.checkout', compact('billingDetails', 'totalShipping', 'grandTotal'));
     }
 }

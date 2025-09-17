@@ -13,6 +13,7 @@ function create_esewa_order(){
     $order->order_tracking_id = 'ot-'.date("U");
     $order->payment_type = $order_data['payment_type'];
     $order->tax = $order_data['tax'];
+    $order->shipping_cost = $order_data['shipping_cost'];
     $order->subtotal = $order_data['subtotal'];
     $order->total = $order_data['total'];
     $order->save();
