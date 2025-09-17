@@ -12,9 +12,17 @@ class Cart extends Component
     public function addToCart(Request $request)
     {
         $p = Product::find($request->input('product_id'));
-        CartFacade::add($p->id, $p->name, 1, $p->price)->associate('App\Models\Product');
-        session()->flash('success', 'Item added in Cart');
-        return redirect()->route('cart');
+        if(!$p){
+            return redirect()->back()->with([
+                'error' => true,
+                'message' => 'Product not found.'
+            ]);
+        }
+        CartFacade::add($p->id, $p->name, 1, $p->price, ['shipping_cost' => $p->shipping_cost])->associate('App\Models\Product');
+        return redirect()->route('cart')->with([
+            'success' => true,
+            'message' => 'Item has been added to your cart.'
+        ]);
     }
     public function incQty(Request $req)
     {
@@ -22,31 +30,66 @@ class Cart extends Component
         $product = CartFacade::get($rowId);
         $qty = $product->qty + 1;
         CartFacade::update($rowId, $qty);
-        return redirect()->route('cart');
+        return redirect()->route('cart')->with([
+            'success' => true,
+            'message' => 'Item quantity increased.'
+        ]);
     }
     public function decQty(Request $req)
     {
         $rowId = $req->row_id;
         $product = CartFacade::get($rowId);
-        $qty = $product->qty - 1;
-        CartFacade::update($rowId, $qty);
-        return redirect()->route('cart');
+        if ($product) {
+            $qty = max(1, $product->qty - 1);
+            CartFacade::update($rowId, $qty);
+            return redirect()->route('cart')->with([
+                'success' => true,
+                'message' => 'Item quantity decreased.'
+            ]);
+        }
+        return redirect()->route('cart')->with([
+            'error' => true,
+            'message' => 'Item not found in cart.'
+        ]);
     }
     public function destroyItem(Request $req)
     {
         $rowId = $req->row_id;
         CartFacade::remove($rowId);
-        session()->flash('success', 'Item has been removed from cart');
-        return redirect()->back();
+        return redirect()->back()->with([
+            'success' => true,
+            'message' => 'Item has been removed from your cart.'
+        ]);
     }
     public function destroyCart(Request $req)
     {
         CartFacade::destroy();
-        session()->flash('success', 'Cart has been cleared');
-        return redirect()->back();
+        return redirect()->back()->with([
+            'success' => true,
+            'message' => 'Item has been removed from your cart.'
+        ]);
     }
+
+    public function getTotalShippingProperty()
+    {
+        return CartFacade::content()->sum(function ($item) {
+            return ($item->options->shipping_cost ?? 0) * $item->qty;
+        });
+    }
+
+    public function getGrandTotalProperty()
+    {
+        $total = (float) str_replace(',', '', CartFacade::total());
+
+        return $total + $this->totalShipping;
+    }
+
     public function render()
     {
-        return view('livewire.cart');
+        return view('livewire.cart', [
+            'cartItems' => CartFacade::content(),
+            'totalShipping' => $this->totalShipping,
+            'grandTotal' => $this->grandTotal,
+        ]);
     }
 }

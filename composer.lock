@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0036836d242840695ebb304a5950258f",
+    "content-hash": "bda7d8ad8e231b8cecbb379a34aad392",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -4876,6 +4876,64 @@
                 "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.9.0"
             },
             "time": "2025-07-11T13:20:48+00:00"
+        },
+        {
+            "name": "sangamkatwal/sangam-toastr",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/143Sangam143/sangam-toastr.git",
+                "reference": "e51a929edef4afa4c9b003b94e2cb5090ddcaf2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/143Sangam143/sangam-toastr/zipball/e51a929edef4afa4c9b003b94e2cb5090ddcaf2c",
+                "reference": "e51a929edef4afa4c9b003b94e2cb5090ddcaf2c",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=8.0",
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SangamToastr\\ToastrServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SangamToastr\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sangam Katwal",
+                    "email": "katwalsangam@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple Laravel package for Toastr notifications with support for session flash messages and AJAX responses. Handles success, error, warning, and info notifications seamlessly.",
+            "homepage": "https://github.com/143Sangam143/sangam-toastr",
+            "keywords": [
+                "ajax",
+                "flash-messages",
+                "laravel",
+                "notifications",
+                "sangam",
+                "toastr"
+            ],
+            "support": {
+                "issues": "https://github.com/143Sangam143/sangam-toastr/issues",
+                "source": "https://github.com/143Sangam143/sangam-toastr/tree/v1.0.1"
+            },
+            "time": "2025-09-17T15:05:44+00:00"
         },
         {
             "name": "spatie/invade",

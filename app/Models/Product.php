@@ -20,6 +20,7 @@ class Product extends Model
         'quantity',
         'image',
         'images',
+        'shipping_cost'
     ];
 
     public function categories()

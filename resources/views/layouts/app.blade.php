@@ -15,6 +15,11 @@
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <link rel="stylesheet" href="{{ asset('vendor/sangam-toastr/toastr.min.css') }}">
+    <script src="{{ asset('vendor/sangam-toastr/toastr.min.js') }}"></script>
 </head>
 
 <body class="font-sans antialiased">
@@ -24,6 +29,7 @@
     </main>
     @include('layouts.footer')
     @livewireScripts
+    @include('sangam-toastr::toastr')
 </body>
 
 </html>
