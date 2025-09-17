@@ -49,14 +49,19 @@ class Checkout extends Component
         $invoiceService = new InvoiceService();
         $invoice = $invoiceService->createInvoice($order);
         Mail::to(Auth::user()->email)->send(new OrderReceived($order,$invoice));
-        return redirect()->route('dashboard')->with(['success','Order has been placed.']);
+        return redirect()->route('dashboard')->with([
+            'success' => true,
+            'message' => 'Your order has been placed successfully.'
+        ]);
     }
 
     public function render()
     {
         if (Cart::count() <= 0) {
-            session()->flash('error', 'Your cart is empty.');
-            return redirect()->route('home');
+            return redirect()->route('home')->with([
+                'success' => false,
+                'message' => 'Your cart is empty.'
+            ]);
         }
         $user = Auth::user();
         $billingDetails = $user->billingDetails;

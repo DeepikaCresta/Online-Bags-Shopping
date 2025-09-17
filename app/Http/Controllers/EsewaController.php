@@ -46,13 +46,23 @@ class EsewaController extends Controller
                 $invoiceService = new InvoiceService();
                 $invoice = $invoiceService->createInvoice($order);
                 Mail::to(Auth::user()->email)->send(new OrderReceived($order,$invoice));
-                return redirect()->route('dashboard')->with('success', 'Trasaction completed.');
+                return redirect()->route('dashboard')->with([
+                    'success' => true,
+                    'message' => 'Your transaction was successful. Order has been placed.'
+                ]);
             }
         }
+        return redirect()->route('cart')->with([
+            'error' => true,
+            'message' => 'Transaction verification failed. Please try again.'
+        ]);
     }
     public function failure()
     {
-        return redirect()->route('cart')->with('error', 'Transaction failed.');
+        return redirect()->route('cart')->with([
+            'error' => true,
+            'message' => 'Transaction failed. Please try again.'
+        ]);
     }
     //extract value from response code of verification of payment
     public function get_response($node, $xml)
@@ -129,18 +139,21 @@ class EsewaController extends Controller
     {
         $data = $request->data;
         $decodedData = json_decode(base64_decode($data), true);
-        if(empty($decodedData)){
-            return redirect()->route('cart')->with(['error','Transaction failed']);
-        }
-        if ($decodedData['status'] !== 'COMPLETE') {
-            return redirect()->route('cart')->with(['error','Transaction failed']);
+        if(empty($decodedData) || $decodedData['status'] !== 'COMPLETE'){
+            return redirect()->route('cart')->with([
+                'error' => true,
+                'message' => 'Transaction failed. Please try again.'
+            ]);
         }
         else{
             $order = create_esewa_order();
             $invoiceService = new InvoiceService();
             $invoice = $invoiceService->createInvoice($order);
             Mail::to(Auth::user()->email)->send(new OrderReceived($order,$invoice));
-            return redirect()->route('dashboard')->with(['success','Order has been placed.']);
+            return redirect()->route('dashboard')->with([
+                'success' => true,
+                'message' => 'Your payment was successful. Order has been placed.'
+            ]);
         }
     }
     public function esewa_view(){

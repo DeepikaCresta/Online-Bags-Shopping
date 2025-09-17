@@ -1,5 +1,5 @@
 <div class="col-lg-3 primary-sidebar sticky-sidebar">
-    <div class="row">
+    {{--<div class="row">
         <div class="col-lg-12 col-mg-6">
             @if (session()->has('error'))
                 <div class="alert alert-danger">
@@ -12,7 +12,7 @@
             @endif
         </div>
         <div class="col-lg-12 col-mg-6"></div>
-    </div>
+    </div>--}}
     <div class="widget-category mb-30 rounded-3xl border-slate-200  shadow-md">
         <h1 class="font-bold text-lg tracking-widest text-orange-500 mb-2 uppercase">Categories</h1>
         <ul class="categories">

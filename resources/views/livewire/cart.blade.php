@@ -1,11 +1,11 @@
 <x-app-layout>
     <section class="mt-50 mb-50">
         <div class="container">
-            @if (session()->has('success'))
+            {{--@if (session()->has('success'))
                 <div class="alert alert-success">
                     {{ session()->get('success') }}
                 </div>
-            @endif
+            @endif--}}
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
