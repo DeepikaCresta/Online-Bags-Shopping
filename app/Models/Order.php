@@ -12,7 +12,14 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'status','order_tracking_id','payment_type','tax','subtotal','total',
+        'user_id', 'status','order_tracking_id','payment_type','tax','subtotal','total','shipping_cost',
+    ];
+
+    protected $casts = [
+        'subtotal' => 'decimal:2',
+        'total' => 'decimal:2',
+        'shipping_cost' => 'decimal:2',
+        'tax' => 'decimal:2',
     ];
 
     protected static function boot()

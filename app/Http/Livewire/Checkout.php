@@ -47,8 +47,10 @@ class Checkout extends Component
             'tax' => Cart::tax(),
             'shipping_cost' => $totalShipping,
             'payment_type' => 'cash',
-            'subtotal' => Cart::subtotal(),
-            'total' => $total,
+            // 'subtotal' => Cart::subtotal(),
+            // 'total' => $total,
+            'subtotal' => (float) str_replace(',', '', Cart::subtotal()),
+            'total' => (float) str_replace(',', '', Cart::total()) + $totalShipping,
         ];
         session()->put('order_data', $order_data);
 

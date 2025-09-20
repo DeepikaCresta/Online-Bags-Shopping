@@ -100,20 +100,22 @@ class EsewaController extends Controller
             $user->billingDetails()->update($validatedRequest);
         }
         
-        $totalShipping = Cart::content()->sum(function ($item) {
+       $totalShipping = Cart::content()->sum(function ($item) {
             return ($item->options->shipping_cost ?? 0) * $item->qty;
         });
 
-        $total = (float) str_replace(',', '', Cart::total())+$totalShipping;
+        $subtotal = (float) Cart::subtotal(0, '', ''); // raw numeric subtotal
+        $tax = (float) Cart::tax(0, '', '');           // raw numeric tax
+        $total = $subtotal + $tax + $totalShipping;    // always calculate clean total
 
         $order_data = [
-            'user_id' => Auth::user()->id,
+            'user_id' => Auth::id(),
             'order_tracking_id' => 'ot-' . date("U"),
-            'tax' => Cart::tax(),
+            'tax' => number_format($tax, 2, '.', ''),                // "0.00"
             'payment_type' => 'esewa',
-            'shipping_cost' => $totalShipping,
-            'subtotal' => Cart::subtotal(),
-            'total' => $total
+            'shipping_cost' => number_format($totalShipping, 2, '.', ''), // "200.00"
+            'subtotal' => number_format($subtotal, 2, '.', ''),      // "3153.50"
+            'total' => number_format($total, 2, '.', ''),            // "3353.50"
         ];
         session()->put('order_data', $order_data);
         $amount = $order_data['subtotal'];
